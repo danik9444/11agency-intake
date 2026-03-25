@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11Agency — שאלון לקוח חדש</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --primary: #6C5CE7;
+    --primary-light: #A29BFE;
+    --primary-dark: #5A4BD1;
+    --bg: #0F0F1A;
+    --bg-card: #1A1A2E;
+    --bg-input: #16213E;
+    --text: #EAEAEA;
+    --text-muted: #8B8B9E;
+    --border: #2A2A4A;
+    --accent: #00D2FF;
+    --success: #00E676;
+    --glow: rgba(108, 92, 231, 0.3);
+  }
+  
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+  
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 0 30px;
+  }
+  
+  .logo {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 300;
+  }
+  
+  /* Progress */
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin: 30px 0 20px;
+  }
+  
+  .progress-step {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    transition: background 0.5s ease;
+  }
+  
+  .progress-step.active {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  
+  .progress-label {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  
+  /* Sections */
+  .form-section {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  
+  .form-section.active {
+    display: block;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    box-shadow: 0 4px 20px var(--glow);
+  }
+  
+  .section-title {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  
+  /* Form Fields */
+  .field {
+    margin-bottom: 18px;
+  }
+  
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  
+  .field label .optional {
+    color: var(--text-muted);
+    font-weight: 300;
+    font-size: 12px;
+  }
+  
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--glow);
+  }
+  
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+  
+  .field textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  
+  .field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238B8B9E' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 16px center;
+    padding-left: 40px;
+  }
+  
+  .field select option {
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  
+  /* Chips */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .chip {
+    padding: 10px 18px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  
+  .chip:hover {
+    border-color: var(--primary-light);
+  }
+  
+  .chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 2px 12px var(--glow);
+  }
+  
+  /* Toggle */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    padding: 14px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text);
+  }
+  
+  .toggle-btn:hover {
+    border-color: var(--primary-light);
+  }
+  
+  .toggle-btn.selected {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 2px 16px var(--glow);
+  }
+  
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  
+  .btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    box-shadow: 0 4px 20px var(--glow);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px var(--glow);
+  }
+  
+  .btn-secondary {
+    background: var(--bg-input);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+  }
+  
+  .btn-secondary:hover {
+    border-color: var(--primary-light);
+    color: var(--text);
+  }
+  
+  .btn-submit {
+    background: linear-gradient(135deg, var(--success), #00B060);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 230, 118, 0.3);
+  }
+  
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(0, 230, 118, 0.4);
+  }
+  
+  /* Success */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .success-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+  
+  .success-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--success), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .success-text {
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  
+  /* Link fields */
+  .link-field {
+    position: relative;
+  }
+  
+  .link-field .platform-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    opacity: 0.5;
+  }
+  
+  .link-field input {
+    padding-right: 44px;
+  }
+  
+  /* Mobile */
+  @media (max-width: 480px) {
+    .container { padding: 12px 12px 32px; }
+    .header { padding: 28px 0 20px; }
+    .logo { font-size: 26px; }
+    .section-title { font-size: 19px; }
+    .toggle-group { flex-direction: column; }
+    .chips { gap: 6px; }
+    .chip { padding: 8px 14px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">11Agency</div>
+    <div class="subtitle">שאלון התחלת מחקר — לקוח חדש</div>
+  </div>
+  
+  <div class="progress-bar">
+    <div class="progress-step active" id="prog-1"></div>
+    <div class="progress-step" id="prog-2"></div>
+    <div class="progress-step" id="prog-3"></div>
+    <div class="progress-step" id="prog-4"></div>
+    <div class="progress-step" id="prog-5"></div>
+    <div class="progress-step" id="prog-6"></div>
+  </div>
+  <div class="progress-label" id="progress-label">שלב 1 מתוך 6</div>
+  
+  <form id="intakeForm">
+    
+    <!-- Section 1: Business -->
+    <div class="form-section active" id="section-1">
+      <div class="section-header">
+        <div class="section-icon">🏢</div>
+        <div>
+          <div class="section-title">פרטי העסק</div>
+          <div class="section-desc">ספרו לנו על העסק שלכם</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>שם העסק / מותג</label>
+        <input type="text" name="business_name" placeholder="למשל: Studio X" required>
+      </div>
+      
+      <div class="field">
+        <label>תחום פעילות (נישה)</label>
+        <input type="text" name="niche" placeholder="למשל: אופנה, כושר, SaaS, מסעדנות..." required>
+      </div>
+      
+      <div class="field">
+        <label>מוצרים / שירותים עיקריים</label>
+        <textarea name="products" placeholder="תארו בקצרה את המוצרים או השירותים המרכזיים שלכם"></textarea>
+      </div>
+      
+      <div class="field">
+        <label>אתר אינטרנט <span class="optional">(אופציונלי)</span></label>
+        <input type="url" name="website" placeholder="https://...">
+      </div>
+      
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" onclick="nextSection()">המשך ←</button>
+      </div>
+    </div>
+    
+    <!-- Section 2: Channels -->
+    <div class="form-section" id="section-2">
+      <div class="section-header">
+        <div class="section-icon">🔗</div>
+        <div>
+          <div class="section-title">ערוצים קיימים</div>
+          <div class="section-desc">שתפו לינקים לערוצים שכבר קיימים</div>
+        </div>
+      </div>
+      
+      <div class="field link-field">
+        <label>פייסבוק <span class="optional">(אופציונלי)</span></label>
+        <span class="platform-icon">📘</span>
+        <input type="url" name="facebook_url" placeholder="https://facebook.com/...">
+      </div>
+      
+      <div class="field link-field">
+        <label>אינסטגרם <span class="optional">(אופציונלי)</span></label>
+        <span class="platform-icon">📸</span>
+        <input type="url" name="instagram_url" placeholder="https://instagram.com/...">
+      </div>
+      
+      <div class="field link-field">
+        <label>טיקטוק <span class="optional">(אופציונלי)</span></label>
+        <span class="platform-icon">🎵</span>
+        <input type="url" name="tiktok_url" placeholder="https://tiktok.com/@...">
+      </div>
+      
+      <div class="field link-field">
+        <label>יוטיוב <span class="optional">(אופציונלי)</span></label>
+        <span class="platform-icon">▶️</span>
+        <input type="url" name="youtube_url" placeholder="https://youtube.com/@...">
+      </div>
+      
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" onclick="prevSection()">→ חזרה</button>
+        <button type="button" class="btn btn-primary" onclick="nextSection()">המשך ←</button>
+      </div>
+    </div>
+    
+    <!-- Section 3: Audience -->
+    <div class="form-section" id="section-3">
+      <div class="section-header">
+        <div class="section-icon">🎯</div>
+        <div>
+          <div class="section-title">קהל יעד</div>
+          <div class="section-desc">מי הלקוחות שלכם?</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>טווח גילאים</label>
+        <div class="chips" data-name="age_range">
+          <div class="chip" data-value="18-24">18-24</div>
+          <div class="chip" data-value="25-34">25-34</div>
+          <div class="chip" data-value="35-44">35-44</div>
+          <div class="chip" data-value="45-54">45-54</div>
+          <div class="chip" data-value="55+">55+</div>
+          <div class="chip" data-value="all">כל הגילאים</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>מיקום גיאוגרפי</label>
+        <input type="text" name="geo" placeholder="למשל: ישראל, ארה״ב, אירופה, גלובלי..." required>
+      </div>
+      
+      <div class="field">
+        <label>שפה עיקרית</label>
+        <div class="chips" data-name="language">
+          <div class="chip" data-value="hebrew">עברית</div>
+          <div class="chip" data-value="english">אנגלית</div>
+          <div class="chip" data-value="arabic">ערבית</div>
+          <div class="chip" data-value="russian">רוסית</div>
+          <div class="chip" data-value="other">אחר</div>
+        </div>
+      </div>
+      
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" onclick="prevSection()">→ חזרה</button>
+        <button type="button" class="btn btn-primary" onclick="nextSection()">המשך ←</button>
+      </div>
+    </div>
+    
+    <!-- Section 4: Competitors -->
+    <div class="form-section" id="section-4">
+      <div class="section-header">
+        <div class="section-icon">⚔️</div>
+        <div>
+          <div class="section-title">מתחרים</div>
+          <div class="section-desc">מי המתחרים העיקריים שלכם?</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>מתחרים ישירים <span class="optional">(שמות או לינקים)</span></label>
+        <textarea name="competitors" placeholder="מתחרה 1:&#10;מתחרה 2:&#10;מתחרה 3:"></textarea>
+      </div>
+      
+      <div class="field">
+        <label>מתחרה שאיפתי <span class="optional">(מותג גדול להשראה)</span></label>
+        <input type="text" name="aspirational" placeholder="למשל: Nike, Apple, מותג שמעריצים...">
+      </div>
+      
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" onclick="prevSection()">→ חזרה</button>
+        <button type="button" class="btn btn-primary" onclick="nextSection()">המשך ←</button>
+      </div>
+    </div>
+    
+    <!-- Section 5: Goals -->
+    <div class="form-section" id="section-5">
+      <div class="section-header">
+        <div class="section-icon">🚀</div>
+        <div>
+          <div class="section-title">מטרות ואסטרטגיה</div>
+          <div class="section-desc">מה אתם רוצים להשיג?</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>מטרה עיקרית</label>
+        <div class="chips" data-name="goal">
+          <div class="chip" data-value="growth">📈 צמיחה</div>
+          <div class="chip" data-value="leads">🧲 לידים</div>
+          <div class="chip" data-value="sales">💰 מכירות</div>
+          <div class="chip" data-value="awareness">👁 מודעות מותג</div>
+          <div class="chip" data-value="engagement">💬 מעורבות</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>סוג פעילות</label>
+        <div class="toggle-group" data-name="activity_type">
+          <div class="toggle-btn" data-value="organic">🌱 אורגני</div>
+          <div class="toggle-btn" data-value="paid">💳 ממומן</div>
+          <div class="toggle-btn" data-value="both">⚡ שניהם</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>פלטפורמות בעדיפות</label>
+        <div class="chips multi" data-name="platforms">
+          <div class="chip" data-value="facebook">📘 פייסבוק</div>
+          <div class="chip" data-value="instagram">📸 אינסטגרם</div>
+          <div class="chip" data-value="tiktok">🎵 טיקטוק</div>
+          <div class="chip" data-value="youtube">▶️ יוטיוב</div>
+          <div class="chip" data-value="all">🌐 כולן</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>תקציב פרסום חודשי <span class="optional">(אופציונלי)</span></label>
+        <div class="chips" data-name="budget">
+          <div class="chip" data-value="0">אין תקציב</div>
+          <div class="chip" data-value="1-5k">₪1,000-5,000</div>
+          <div class="chip" data-value="5-15k">₪5,000-15,000</div>
+          <div class="chip" data-value="15-50k">₪15,000-50,000</div>
+          <div class="chip" data-value="50k+">₪50,000+</div>
+        </div>
+      </div>
+      
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" onclick="prevSection()">→ חזרה</button>
+        <button type="button" class="btn btn-primary" onclick="nextSection()">המשך ←</button>
+      </div>
+    </div>
+    
+    <!-- Section 6: Access -->
+    <div class="form-section" id="section-6">
+      <div class="section-header">
+        <div class="section-icon">🔑</div>
+        <div>
+          <div class="section-title">גישות טכניות</div>
+          <div class="section-desc">לאילו מערכות יש לכם גישה?</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>גישה ל-Meta Business Suite?</label>
+        <div class="toggle-group" data-name="meta_access">
+          <div class="toggle-btn" data-value="yes">✅ כן</div>
+          <div class="toggle-btn" data-value="no">❌ לא</div>
+          <div class="toggle-btn" data-value="unsure">🤔 לא בטוח</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>גישה ל-YouTube Studio?</label>
+        <div class="toggle-group" data-name="youtube_access">
+          <div class="toggle-btn" data-value="yes">✅ כן</div>
+          <div class="toggle-btn" data-value="no">❌ לא</div>
+          <div class="toggle-btn" data-value="unsure">🤔 לא בטוח</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>גישה ל-TikTok Business Center?</label>
+        <div class="toggle-group" data-name="tiktok_access">
+          <div class="toggle-btn" data-value="yes">✅ כן</div>
+          <div class="toggle-btn" data-value="no">❌ לא</div>
+          <div class="toggle-btn" data-value="unsure">🤔 לא בטוח</div>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>הערות נוספות <span class="optional">(אופציונלי)</span></label>
+        <textarea name="notes" placeholder="משהו נוסף שחשוב לנו לדעת?"></textarea>
+      </div>
+      
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" onclick="prevSection()">→ חזרה</button>
+        <button type="button" class="btn btn-submit" onclick="submitForm()">🚀 שליחה</button>
+      </div>
+    </div>
+    
+  </form>
+  
+  <!-- Success -->
+  <div class="success-screen" id="success">
+    <div class="success-icon">✅</div>
+    <div class="success-title">התקבל בהצלחה!</div>
+    <div class="success-text">
+      תודה שמילאתם את השאלון.<br>
+      הצוות שלנו יחזור אליכם תוך 24 שעות<br>
+      עם תוכנית מחקר מותאמת אישית.
+    </div>
+  </div>
+</div>
+
+<script>
+let current = 1;
+const total = 6;
+
+// Chips selection
+document.querySelectorAll('.chips').forEach(group => {
+  const isMulti = group.classList.contains('multi');
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (isMulti) {
+        chip.classList.toggle('selected');
+        // If "all" selected, deselect others
+        if (chip.dataset.value === 'all' && chip.classList.contains('selected')) {
+          group.querySelectorAll('.chip:not([data-value="all"])').forEach(c => c.classList.remove('selected'));
+        } else if (chip.dataset.value !== 'all') {
+          group.querySelector('[data-value="all"]')?.classList.remove('selected');
+        }
+      } else {
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      }
+    });
+  });
+});
+
+// Toggle buttons
+document.querySelectorAll('.toggle-group').forEach(group => {
+  group.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+});
+
+function updateProgress() {
+  for (let i = 1; i <= total; i++) {
+    document.getElementById(`prog-${i}`).classList.toggle('active', i <= current);
+  }
+  document.getElementById('progress-label').textContent = `שלב ${current} מתוך ${total}`;
+}
+
+function nextSection() {
+  if (current < total) {
+    document.getElementById(`section-${current}`).classList.remove('active');
+    current++;
+    document.getElementById(`section-${current}`).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function prevSection() {
+  if (current > 1) {
+    document.getElementById(`section-${current}`).classList.remove('active');
+    current--;
+    document.getElementById(`section-${current}`).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function getFormData() {
+  const form = document.getElementById('intakeForm');
+  const data = {};
+  
+  // Text inputs
+  form.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.name && el.value) data[el.name] = el.value;
+  });
+  
+  // Chips
+  document.querySelectorAll('.chips').forEach(group => {
+    const name = group.dataset.name;
+    const selected = [...group.querySelectorAll('.chip.selected')].map(c => c.dataset.value);
+    if (selected.length) data[name] = selected.join(', ');
+  });
+  
+  // Toggles
+  document.querySelectorAll('.toggle-group').forEach(group => {
+    const name = group.dataset.name;
+    const selected = group.querySelector('.toggle-btn.selected');
+    if (selected) data[name] = selected.dataset.value;
+  });
+  
+  return data;
+}
+
+function submitForm() {
+  const data = getFormData();
+  
+  // Format as readable text
+  let text = "📋 *שאלון לקוח חדש*\n\n";
+  
+  const labels = {
+    business_name: "שם העסק", niche: "נישה", products: "מוצרים/שירותים",
+    website: "אתר", facebook_url: "פייסבוק", instagram_url: "אינסטגרם",
+    tiktok_url: "טיקטוק", youtube_url: "יוטיוב", age_range: "גילאים",
+    geo: "מיקום", language: "שפה", competitors: "מתחרים",
+    aspirational: "מתחרה שאיפתי", goal: "מטרה", activity_type: "סוג פעילות",
+    platforms: "פלטפורמות", budget: "תקציב", meta_access: "Meta Business Suite",
+    youtube_access: "YouTube Studio", tiktok_access: "TikTok Business Center",
+    notes: "הערות"
+  };
+  
+  for (const [key, val] of Object.entries(data)) {
+    text += `*${labels[key] || key}:* ${val}\n`;
+  }
+  
+  // Copy to clipboard
+  navigator.clipboard.writeText(text).catch(() => {});
+  
+  // Store in hidden field for potential webhook
+  console.log("Form data:", JSON.stringify(data, null, 2));
+  
+  // Show success
+  document.getElementById('intakeForm').style.display = 'none';
+  document.querySelector('.progress-bar').style.display = 'none';
+  document.getElementById('progress-label').style.display = 'none';
+  document.getElementById('success').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
