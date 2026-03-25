@@ -3,1428 +3,1633 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>11Agency — טופס קליטת לקוח</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>11Agency — שאלון קליטת לקוח</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --primary: #6C5CE7;
-  --primary-light: #a29bfe;
-  --primary-dark: #5a4bd1;
+  --primary-light: #8B7CF0;
+  --primary-dark: #5A4BD6;
   --accent: #00D2FF;
-  --accent-glow: rgba(0, 210, 255, 0.3);
-  --bg-dark: #0a0a0f;
-  --bg-card: #13131a;
-  --bg-input: #1a1a25;
-  --bg-input-focus: #1e1e2a;
-  --border: #2a2a3a;
-  --border-focus: #6C5CE7;
-  --text: #e8e8f0;
-  --text-muted: #8888a0;
-  --text-dim: #555570;
+  --accent-glow: rgba(0,210,255,0.15);
+  --bg: #0F0F1A;
+  --bg-card: #1A1A2E;
+  --bg-input: #16162B;
+  --bg-hover: #222240;
   --success: #00E676;
-  --danger: #ff4757;
+  --error: #FF5252;
+  --text: #E8E8F0;
+  --text-dim: #8888AA;
+  --text-muted: #555577;
+  --border: #2A2A45;
+  --border-focus: #6C5CE7;
   --radius: 12px;
   --radius-sm: 8px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-pill: 50px;
+  --transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+  --glow-primary: 0 0 20px rgba(108,92,231,0.3);
+  --glow-accent: 0 0 20px rgba(0,210,255,0.3);
 }
+
+html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Heebo', sans-serif;
-  background: var(--bg-dark);
+  background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Progress Bar ── */
+/* ===== HEADER / LOGO ===== */
+.header {
+  text-align: center;
+  padding: 32px 20px 0;
+}
+.header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.header p {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* ===== PROGRESS BAR ===== */
 .progress-container {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 100;
-  background: rgba(10, 10, 15, 0.95);
-  backdrop-filter: blur(10px);
+  background: var(--bg);
   padding: 16px 20px 12px;
   border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
 }
-
-.progress-steps {
+.progress-bar {
   display: flex;
-  gap: 6px;
-  max-width: 600px;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  max-width: 700px;
   margin: 0 auto;
 }
-
-.progress-step {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  left: 15px;
+  height: 3px;
   background: var(--border);
-  transition: background var(--transition), box-shadow var(--transition);
+  z-index: 0;
+}
+.progress-fill {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  z-index: 1;
+  transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+  width: 0%;
+}
+.step-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  z-index: 2;
+  transition: var(--transition);
+  cursor: pointer;
   position: relative;
 }
-
-.progress-step.active {
+.step-dot.active {
+  border-color: var(--primary);
   background: var(--primary);
-  box-shadow: 0 0 12px rgba(108, 92, 231, 0.5);
+  color: #fff;
+  box-shadow: var(--glow-primary);
 }
-
-.progress-step.completed {
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent-glow);
+.step-dot.completed {
+  border-color: var(--success);
+  background: var(--success);
+  color: #0F0F1A;
 }
-
-.progress-label {
-  text-align: center;
-  margin-top: 8px;
-  font-size: 12px;
+.step-labels {
+  display: flex;
+  justify-content: space-between;
+  max-width: 700px;
+  margin: 8px auto 0;
+}
+.step-label {
+  font-size: 10px;
   color: var(--text-muted);
-  font-weight: 500;
-}
-
-.step-counter {
   text-align: center;
-  margin-top: 4px;
-  font-size: 11px;
-  color: var(--text-dim);
+  width: 60px;
+  transition: var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.step-label.active { color: var(--primary-light); }
+.step-label.completed { color: var(--success); }
 
-/* ── Form Container ── */
+/* ===== FORM CONTAINER ===== */
 .form-wrapper {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
-  padding: 100px 20px 40px;
+  padding: 24px 20px 120px;
+  position: relative;
+  overflow: hidden;
 }
 
-.form-page {
+/* ===== PAGE (STEP) ===== */
+.page {
   display: none;
-  animation: fadeSlideIn 0.4s ease forwards;
+  animation: fadeSlideIn 400ms ease forwards;
 }
-
-.form-page.active {
-  display: block;
-}
+.page.active { display: block; }
 
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeSlideOut {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-20px); }
-}
-
 .page-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
-  background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 100%);
+  background: linear-gradient(135deg, #fff, var(--text));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .page-subtitle {
+  color: var(--text-dim);
   font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-/* ── Form Fields ── */
+/* ===== FIELD GROUP ===== */
 .field-group {
   margin-bottom: 24px;
 }
-
-.field-label {
+.field-group label, .field-label {
   display: block;
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 8px;
 }
-
 .field-label .optional {
   font-weight: 400;
   color: var(--text-dim);
   font-size: 12px;
+  margin-right: 4px;
 }
 
-.input-wrapper {
-  position: relative;
-}
-
+/* ===== INPUTS ===== */
 input[type="text"],
 input[type="url"],
 input[type="email"],
 input[type="tel"],
-input[type="password"],
+input[type="number"],
 textarea {
   width: 100%;
   padding: 14px 16px;
   background: var(--bg-input);
   border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'Heebo', sans-serif;
   font-size: 15px;
-  transition: all var(--transition);
+  transition: var(--transition);
   outline: none;
+  direction: rtl;
 }
-
 input::placeholder, textarea::placeholder {
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-size: 13px;
 }
-
 input:focus, textarea:focus {
-  border-color: var(--border-focus);
-  background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15), 0 0 20px rgba(108, 92, 231, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108,92,231,0.15);
 }
+input.error, textarea.error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(255,82,82,0.15);
+}
+.error-msg {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+.error-msg.show { display: block; }
 
 textarea {
-  resize: vertical;
   min-height: 100px;
+  resize: vertical;
 }
 
-/* ── Icon Input (social, website) ── */
-.icon-input {
+/* ===== SOCIAL INPUT WITH ICON ===== */
+.social-input-wrap {
   position: relative;
+  margin-bottom: 12px;
 }
-
-.icon-input input {
+.social-input-wrap input {
   padding-right: 48px;
+  direction: ltr;
+  text-align: left;
 }
-
-.icon-input .input-icon {
+.social-icon {
   position: absolute;
   right: 14px;
   top: 50%;
   transform: translateY(-50%);
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
 }
+.social-icon svg { width: 20px; height: 20px; }
 
-.icon-input .input-icon svg {
-  width: 20px;
-  height: 20px;
+/* ===== URL INPUT ===== */
+.url-input-wrap {
+  position: relative;
+}
+.url-input-wrap input {
+  padding-right: 48px;
+  direction: ltr;
+  text-align: left;
+}
+.url-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
-/* ── Dynamic Service Fields ── */
-.service-entry {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 10px;
-  animation: slideIn 0.3s ease forwards;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(20px); max-height: 0; }
-  to { opacity: 1; transform: translateX(0); max-height: 60px; }
-}
-
-.service-entry.removing {
-  animation: slideOut 0.3s ease forwards;
-}
-
-@keyframes slideOut {
-  from { opacity: 1; transform: translateX(0); max-height: 60px; }
-  to { opacity: 0; transform: translateX(20px); max-height: 0; margin-bottom: 0; }
-}
-
-.service-entry input {
-  flex: 1;
-}
-
-.btn-remove {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  border-radius: 50%;
-  border: 1.5px solid var(--danger);
-  background: transparent;
-  color: var(--danger);
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-  font-family: 'Heebo', sans-serif;
-}
-
-.btn-remove:hover {
-  background: var(--danger);
-  color: #fff;
-}
-
-.btn-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
-  border: 1.5px dashed var(--primary);
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--primary-light);
-  font-family: 'Heebo', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-  margin-top: 4px;
-}
-
-.btn-add:hover {
-  background: rgba(108, 92, 231, 0.1);
-  border-color: var(--primary-light);
-}
-
-/* ── Chips (multi-select & single-select) ── */
-.chips-container {
+/* ===== CHIPS ===== */
+.chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
-
 .chip {
   padding: 10px 18px;
-  border-radius: 50px;
-  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
   background: var(--bg-input);
-  color: var(--text-muted);
-  font-family: 'Heebo', sans-serif;
+  border: 1.5px solid var(--border);
+  color: var(--text-dim);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: var(--transition);
   user-select: none;
+  white-space: nowrap;
 }
-
 .chip:hover {
   border-color: var(--primary);
-  color: var(--text);
+  background: var(--bg-hover);
 }
-
 .chip.selected {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;
-  box-shadow: 0 0 16px rgba(108, 92, 231, 0.4);
+  box-shadow: var(--glow-primary);
 }
+/* Brand colored chips */
+.chip.brand-facebook.selected { background: #1877F2; border-color: #1877F2; box-shadow: 0 0 15px rgba(24,119,242,0.3); }
+.chip.brand-instagram.selected { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #dc2743; }
+.chip.brand-tiktok.selected { background: #010101; border-color: #69C9D0; color: #69C9D0; box-shadow: 0 0 15px rgba(105,201,208,0.3); }
+.chip.brand-youtube.selected { background: #FF0000; border-color: #FF0000; box-shadow: 0 0 15px rgba(255,0,0,0.3); }
+.chip.brand-linkedin.selected { background: #0A66C2; border-color: #0A66C2; box-shadow: 0 0 15px rgba(10,102,194,0.3); }
 
-/* ── Location Tags ── */
-.location-tags {
+/* ===== TOGGLE GROUP (segmented control) ===== */
+.toggle-group {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-  min-height: 0;
-}
-
-.location-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: rgba(108, 92, 231, 0.15);
-  border: 1px solid var(--primary);
-  border-radius: 50px;
-  color: var(--primary-light);
-  font-size: 13px;
-  font-weight: 500;
-  animation: chipIn 0.25s ease forwards;
-}
-
-@keyframes chipIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.location-tag .tag-remove {
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--primary-light);
-  transition: color var(--transition);
-  line-height: 1;
-}
-
-.location-tag .tag-remove:hover {
-  color: var(--danger);
-}
-
-/* ── Other language reveal ── */
-.other-lang-input {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
-  margin-top: 0;
-}
-
-.other-lang-input.visible {
-  max-height: 70px;
-  opacity: 1;
-  margin-top: 12px;
-}
-
-/* ── Navigation Buttons ── */
-.nav-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
-  gap: 12px;
-}
-
-.btn {
-  padding: 14px 32px;
-  border-radius: var(--radius);
-  font-family: 'Heebo', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 30px rgba(108, 92, 231, 0.6);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-secondary {
-  background: transparent;
+  background: var(--bg-input);
+  border-radius: var(--radius-pill);
   border: 1.5px solid var(--border);
-  color: var(--text-muted);
+  overflow: hidden;
+  position: relative;
 }
-
-.btn-secondary:hover {
-  border-color: var(--text-muted);
-  color: var(--text);
-}
-
-.btn-submit {
-  background: linear-gradient(135deg, var(--accent), #00b4d8);
-  color: #0a0a0f;
-  width: 100%;
-  justify-content: center;
-  font-size: 18px;
-  padding: 16px;
-  box-shadow: 0 4px 25px rgba(0, 210, 255, 0.4);
-}
-
-.btn-submit:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 35px rgba(0, 210, 255, 0.6);
-}
-
-/* ── Success Screen ── */
-.success-screen {
-  display: none;
+.toggle-option {
+  flex: 1;
+  padding: 12px 16px;
   text-align: center;
-  padding: 60px 20px;
-  animation: fadeSlideIn 0.5s ease forwards;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+  position: relative;
+  z-index: 1;
 }
-
-.success-screen.active {
-  display: block;
+.toggle-option:hover { color: var(--text); }
+.toggle-option.selected {
+  color: #fff;
+  background: var(--primary);
 }
-
-.success-icon {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-  animation: successPulse 2s ease-in-out infinite;
+.toggle-option:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--border);
 }
+.toggle-option.selected::after { display: none; }
 
-@keyframes successPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
-  50% { box-shadow: 0 0 0 20px rgba(108, 92, 231, 0); }
-}
-
-.success-icon svg {
-  width: 48px;
-  height: 48px;
-  stroke: #fff;
-  stroke-width: 3;
-  fill: none;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  animation: checkDraw 0.6s 0.3s ease forwards;
-}
-
-@keyframes checkDraw {
-  to { stroke-dashoffset: 0; }
-}
-
-.success-screen h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--text);
-}
-
-.success-screen p {
-  font-size: 16px;
-  color: var(--text-muted);
-  line-height: 1.7;
-}
-
-/* ── Competitor entry ── */
-.competitor-entry {
+/* ===== DYNAMIC FIELDS ===== */
+.dynamic-fields .dynamic-field {
   display: flex;
   gap: 8px;
   align-items: center;
   margin-bottom: 10px;
-  animation: slideIn 0.3s ease forwards;
+  animation: slideDown 300ms ease forwards;
 }
-
-.competitor-entry.removing {
-  animation: slideOut 0.3s ease forwards;
+@keyframes slideDown {
+  from { opacity: 0; max-height: 0; transform: translateY(-10px); }
+  to { opacity: 1; max-height: 80px; transform: translateY(0); }
 }
-
-.competitor-entry input {
-  flex: 1;
-}
-
-/* ── Checkbox custom ── */
-.checkbox-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-input);
+.dynamic-field input { flex: 1; }
+.remove-field {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,82,82,0.1);
+  border: 1px solid rgba(255,82,82,0.3);
+  color: var(--error);
+  font-size: 18px;
   cursor: pointer;
-  transition: all var(--transition);
-  user-select: none;
-  font-size: 14px;
-}
-
-.checkbox-item:hover {
-  border-color: var(--primary);
-}
-
-.checkbox-item.selected {
-  border-color: var(--primary);
-  background: rgba(108, 92, 231, 0.1);
-  color: var(--primary-light);
-}
-
-.checkbox-item input {
-  display: none;
-}
-
-.check-box {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 2px solid var(--border);
-  transition: all var(--transition);
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-
-.checkbox-item.selected .check-box {
-  background: var(--primary);
-  border-color: var(--primary);
+.remove-field:hover {
+  background: rgba(255,82,82,0.2);
+  border-color: var(--error);
 }
-
-.check-box svg {
-  width: 12px;
-  height: 12px;
-  stroke: #fff;
-  stroke-width: 3;
-  fill: none;
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-
-.checkbox-item.selected .check-box svg {
-  opacity: 1;
-}
-
-/* ── Budget select ── */
-.budget-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.budget-option {
-  padding: 14px 18px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-input);
+.add-field-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: transparent;
+  border: 1.5px dashed var(--primary);
+  border-radius: var(--radius-pill);
+  color: var(--primary-light);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: var(--transition);
+  font-family: 'Heebo', sans-serif;
+  margin-top: 4px;
+}
+.add-field-btn:hover {
+  background: rgba(108,92,231,0.1);
+  border-color: var(--primary-light);
+}
+
+/* ===== LOCATION PILLS ===== */
+.location-selector { margin-top: 8px; }
+.location-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  min-height: 10px;
+}
+.location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--primary);
+  border-radius: var(--radius-pill);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  animation: popIn 200ms ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.location-pill .pill-remove {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: var(--transition);
+}
+.location-pill .pill-remove:hover { background: rgba(255,255,255,0.4); }
+
+.location-input-wrap {
+  position: relative;
+  margin-top: 8px;
+}
+.location-input-wrap input {
+  width: 100%;
+}
+
+/* ===== CONDITIONAL REVEAL ===== */
+.reveal {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 400ms ease, opacity 300ms ease, margin 300ms ease;
+  margin-top: 0;
+}
+.reveal.open {
+  max-height: 500px;
+  opacity: 1;
+  margin-top: 16px;
+}
+
+/* ===== CHECKBOXES (custom) ===== */
+.checkbox-group { margin-bottom: 20px; }
+.checkbox-group h4 {
   font-size: 15px;
-  user-select: none;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
 }
-
-.budget-option:hover {
-  border-color: var(--primary);
-}
-
-.budget-option.selected {
-  border-color: var(--primary);
-  background: rgba(108, 92, 231, 0.12);
-  box-shadow: 0 0 12px rgba(108, 92, 231, 0.2);
-}
-
-/* ── Responsive ── */
-@media (max-width: 480px) {
-  .page-title { font-size: 24px; }
-  .chips-container { gap: 8px; }
-  .chip { padding: 8px 14px; font-size: 13px; }
-  .btn { padding: 12px 24px; font-size: 14px; }
-  .nav-buttons { flex-direction: column-reverse; }
-  .nav-buttons .btn { width: 100%; justify-content: center; }
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
-
-/* ── Brand header ── */
-.brand-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.brand-logo {
-  font-size: 36px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
   margin-bottom: 4px;
 }
-
-.brand-tagline {
-  font-size: 13px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-/* ── Datalist styling helper ── */
-.location-search-wrap {
+.custom-checkbox:hover { background: var(--bg-hover); }
+.cb-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  background: var(--bg-input);
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
 }
-
-.location-search-wrap input {
-  flex: 1;
+.custom-checkbox.checked .cb-box {
+  background: var(--primary);
+  border-color: var(--primary);
 }
-
-.btn-add-location {
-  padding: 14px 18px;
-  border-radius: var(--radius);
-  border: 1.5px solid var(--primary);
-  background: rgba(108, 92, 231, 0.1);
-  color: var(--primary-light);
-  font-family: 'Heebo', sans-serif;
+.cb-check {
+  opacity: 0;
+  transform: scale(0);
+  transition: var(--transition);
+}
+.custom-checkbox.checked .cb-check {
+  opacity: 1;
+  transform: scale(1);
+}
+.cb-label {
   font-size: 14px;
+  color: var(--text-dim);
+  transition: var(--transition);
+}
+.custom-checkbox.checked .cb-label { color: var(--text); }
+
+/* ===== NAVIGATION ===== */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, var(--bg) 60%, transparent);
+  padding: 20px 20px 28px;
+  z-index: 50;
+}
+.nav-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
+}
+.btn {
+  flex: 1;
+  padding: 16px 24px;
+  border-radius: var(--radius);
+  font-family: 'Heebo', sans-serif;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
-  white-space: nowrap;
+  transition: var(--transition);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
-
-.btn-add-location:hover {
-  background: var(--primary);
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
+  box-shadow: var(--glow-primary);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(108,92,231,0.4);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-dim);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--text);
+}
+.btn-submit {
+  background: linear-gradient(135deg, var(--success), #00C853);
+  color: #0F0F1A;
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(0,230,118,0.3);
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0,230,118,0.4);
 }
 
-/* ── Section Divider ── */
-.section-divider {
+/* ===== SUCCESS SCREEN ===== */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+  animation: fadeSlideIn 500ms ease forwards;
+}
+.success-screen.active { display: block; }
+.success-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--success), #00C853);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: successPulse 600ms ease;
+  box-shadow: 0 0 40px rgba(0,230,118,0.3);
+}
+@keyframes successPulse {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.success-icon svg { width: 50px; height: 50px; }
+.success-screen h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.success-screen p {
+  color: var(--text-dim);
+  font-size: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ===== SECTION DIVIDER ===== */
+.divider {
   height: 1px;
-  background: var(--border);
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
   margin: 28px 0;
 }
 
-/* ── Error state ── */
-input.error, textarea.error {
-  border-color: var(--danger) !important;
-  box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.15);
-}
-
-.error-msg {
-  color: var(--danger);
-  font-size: 12px;
-  margin-top: 4px;
-  display: none;
-}
-
-.error-msg.visible {
-  display: block;
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .header h1 { font-size: 24px; }
+  .page-title { font-size: 20px; }
+  .step-dot { width: 26px; height: 26px; font-size: 10px; }
+  .step-labels { display: none; }
+  .chip { padding: 8px 14px; font-size: 13px; }
+  .toggle-option { padding: 10px 12px; font-size: 13px; }
+  .btn { padding: 14px 18px; font-size: 15px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Progress Bar -->
+<div class="header">
+  <h1>11Agency</h1>
+  <p>שאלון קליטת לקוח חדש</p>
+</div>
+
+<!-- PROGRESS BAR -->
 <div class="progress-container">
-  <div class="progress-steps">
-    <div class="progress-step active" data-step="1"></div>
-    <div class="progress-step" data-step="2"></div>
-    <div class="progress-step" data-step="3"></div>
-    <div class="progress-step" data-step="4"></div>
-    <div class="progress-step" data-step="5"></div>
-    <div class="progress-step" data-step="6"></div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+    <div class="step-dot active" data-step="1" onclick="goToStep(1)">1</div>
+    <div class="step-dot" data-step="2" onclick="goToStep(2)">2</div>
+    <div class="step-dot" data-step="3" onclick="goToStep(3)">3</div>
+    <div class="step-dot" data-step="4" onclick="goToStep(4)">4</div>
+    <div class="step-dot" data-step="5" onclick="goToStep(5)">5</div>
+    <div class="step-dot" data-step="6" onclick="goToStep(6)">6</div>
+    <div class="step-dot" data-step="7" onclick="goToStep(7)">7</div>
+    <div class="step-dot" data-step="8" onclick="goToStep(8)">8</div>
   </div>
-  <div class="progress-label" id="progressLabel">פרטי העסק</div>
-  <div class="step-counter" id="stepCounter">1 / 6</div>
+  <div class="step-labels">
+    <span class="step-label active" data-step="1">פרטי העסק</span>
+    <span class="step-label" data-step="2">נוכחות דיגיטלית</span>
+    <span class="step-label" data-step="3">קהל יעד</span>
+    <span class="step-label" data-step="4">מתחרים</span>
+    <span class="step-label" data-step="5">יעדים ותקציב</span>
+    <span class="step-label" data-step="6">נכסי מותג</span>
+    <span class="step-label" data-step="7">פרסום נוכחי</span>
+    <span class="step-label" data-step="8">גישות ושליחה</span>
+  </div>
 </div>
 
 <div class="form-wrapper">
 
-  <!-- Brand -->
-  <div class="brand-header">
-    <div class="brand-logo">11Agency</div>
-    <div class="brand-tagline">שאלון קליטת לקוח</div>
+<!-- ========== PAGE 1: פרטי העסק ========== -->
+<div class="page active" data-page="1">
+  <h2 class="page-title">פרטי העסק</h2>
+  <p class="page-subtitle">ספרו לנו על העסק שלכם</p>
+
+  <div class="field-group">
+    <label>שם העסק / מותג <span style="color:var(--error)">*</span></label>
+    <input type="text" id="businessName" required placeholder="שם העסק או המותג שלכם">
+    <div class="error-msg" id="businessNameError">שדה חובה</div>
   </div>
 
-  <!-- ════════════════ PAGE 1: פרטי העסק ════════════════ -->
-  <div class="form-page active" data-page="1">
-    <h1 class="page-title">פרטי העסק</h1>
-    <p class="page-subtitle">ספרו לנו על העסק שלכם</p>
-
-    <div class="field-group">
-      <label class="field-label">שם העסק / מותג *</label>
-      <input type="text" id="businessName" required placeholder="שם העסק או המותג שלכם">
-      <div class="error-msg" id="businessNameError">שדה חובה</div>
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">תחום פעילות (נישה)</label>
-      <input type="text" id="niche" placeholder="לדוגמה: חדר כושר, בגדים לילדים, עורך דין מקרקעין, סטודיו ליוגה, קליניקה לטיפולי עור...">
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">שירותים</label>
-      <div id="servicesContainer">
-        <div class="service-entry" data-index="0">
-          <input type="text" class="service-input" placeholder="לדוגמה: אימון אישי, פילאטיס, ייעוץ תזונה, עיצוב פנים...">
-        </div>
-      </div>
-      <button type="button" class="btn-add" id="addServiceBtn">
-        <span>+</span> הוסף שירות
-      </button>
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">מוצרים <span class="optional">(אופציונלי)</span></label>
-      <textarea id="products" placeholder="תארו את המוצרים שאתם מוכרים — פיזיים, דיגיטליים, קורסים וכו׳"></textarea>
-    </div>
-
-    <div class="nav-buttons">
-      <div></div>
-      <button type="button" class="btn btn-primary" onclick="nextPage()">המשך ←</button>
-    </div>
+  <div class="field-group">
+    <label>תחום פעילות (נישה)</label>
+    <input type="text" id="niche" placeholder="לדוגמה: חדר כושר בוטיק, בגדי ילדים אונליין, עורך דין מקרקעין, קליניקת שיניים, סטודיו ליוגה...">
   </div>
 
-  <!-- ════════════════ PAGE 2: נוכחות דיגיטלית ════════════════ -->
-  <div class="form-page" data-page="2">
-    <h1 class="page-title">נוכחות דיגיטלית</h1>
-    <p class="page-subtitle">איפה אפשר למצוא אתכם ברשת?</p>
-
-    <div class="field-group">
-      <label class="field-label">אתר אינטרנט <span class="optional">(אופציונלי)</span></label>
-      <div class="icon-input">
-        <input type="url" id="website" placeholder="https://www.example.com" dir="ltr" style="text-align:left;">
-        <div class="input-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        </div>
+  <div class="field-group">
+    <label>שירותים</label>
+    <div class="dynamic-fields" id="servicesFields">
+      <div class="dynamic-field">
+        <input type="text" placeholder="לדוגמה: אימון אישי, ייעוץ תזונה, עיצוב פנים, טיפולי פנים...">
       </div>
     </div>
+    <button class="add-field-btn" onclick="addDynamicField('servicesFields', 'לדוגמה: אימון אישי, ייעוץ תזונה, עיצוב פנים, טיפולי פנים...')">+ הוסף שירות</button>
+  </div>
 
-    <div class="section-divider"></div>
+  <div class="field-group">
+    <label>מוצרים <span class="optional">(אופציונלי)</span></label>
+    <textarea id="products" placeholder="תארו את המוצרים שלכם — פיזיים, דיגיטליים, מנויים..."></textarea>
+  </div>
 
-    <div class="field-group">
-      <label class="field-label">פייסבוק <span class="optional">(אופציונלי)</span></label>
-      <div class="icon-input">
-        <input type="url" id="facebook" placeholder="https://facebook.com/yourpage" dir="ltr" style="text-align:left;">
-        <div class="input-icon">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-        </div>
-      </div>
-    </div>
+  <div class="field-group">
+    <label>מה מבדיל אתכם מהמתחרים? (USP)</label>
+    <textarea id="usp" placeholder="מה הערך הייחודי שלכם? למה לקוח יבחר דווקא בכם?"></textarea>
+  </div>
+</div>
 
-    <div class="field-group">
-      <label class="field-label">אינסטגרם <span class="optional">(אופציונלי)</span></label>
-      <div class="icon-input">
-        <input type="url" id="instagram" placeholder="https://instagram.com/yourprofile" dir="ltr" style="text-align:left;">
-        <div class="input-icon">
-          <svg viewBox="0 0 24 24" width="20" height="20"><defs><radialGradient id="ig" r="150%" cx="30%" cy="107%"><stop offset="0" stop-color="#fdf497"/><stop offset=".05" stop-color="#fdf497"/><stop offset=".45" stop-color="#fd5949"/><stop offset=".6" stop-color="#d6249f"/><stop offset=".9" stop-color="#285AEB"/></radialGradient></defs><rect width="24" height="24" rx="6" fill="url(#ig)"/><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg>
-        </div>
-      </div>
-    </div>
+<!-- ========== PAGE 2: נוכחות דיגיטלית ========== -->
+<div class="page" data-page="2">
+  <h2 class="page-title">נוכחות דיגיטלית</h2>
+  <p class="page-subtitle">איפה אתם נמצאים אונליין?</p>
 
-    <div class="field-group">
-      <label class="field-label">טיקטוק <span class="optional">(אופציונלי)</span></label>
-      <div class="icon-input">
-        <input type="url" id="tiktok" placeholder="https://tiktok.com/@yourprofile" dir="ltr" style="text-align:left;">
-        <div class="input-icon">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.79a8.28 8.28 0 0 0 4.83 1.54V6.88a4.84 4.84 0 0 1-1.07-.19z" fill="#fff"/><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.79a8.28 8.28 0 0 0 4.83 1.54V6.88a4.84 4.84 0 0 1-1.07-.19z" fill="#25F4EE" transform="translate(-0.7, -0.7)"/><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.79a8.28 8.28 0 0 0 4.83 1.54V6.88a4.84 4.84 0 0 1-1.07-.19z" fill="#FE2C55" transform="translate(0.7, 0.7)"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">יוטיוב <span class="optional">(אופציונלי)</span></label>
-      <div class="icon-input">
-        <input type="url" id="youtube" placeholder="https://youtube.com/@yourchannel" dir="ltr" style="text-align:left;">
-        <div class="input-icon">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z" fill="#FF0000"/><path d="M9.545 15.568V8.432L15.818 12z" fill="#fff"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-buttons">
-      <button type="button" class="btn btn-secondary" onclick="prevPage()">→ חזרה</button>
-      <button type="button" class="btn btn-primary" onclick="nextPage()">המשך ←</button>
+  <div class="field-group">
+    <label>אתר אינטרנט <span class="optional">(אופציונלי)</span></label>
+    <div class="url-input-wrap">
+      <span class="url-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8888AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </span>
+      <input type="url" id="website" placeholder="https://www.example.com">
     </div>
   </div>
 
-  <!-- ════════════════ PAGE 3: קהל יעד ════════════════ -->
-  <div class="form-page" data-page="3">
-    <h1 class="page-title">קהל יעד</h1>
-    <p class="page-subtitle">למי אתם רוצים להגיע?</p>
-
-    <div class="field-group">
-      <label class="field-label">טווח גילאים</label>
-      <div class="chips-container" id="ageChips">
-        <div class="chip" data-value="18-24" data-type="specific">18-24</div>
-        <div class="chip" data-value="25-34" data-type="specific">25-34</div>
-        <div class="chip" data-value="35-44" data-type="specific">35-44</div>
-        <div class="chip" data-value="45-54" data-type="specific">45-54</div>
-        <div class="chip" data-value="55+" data-type="specific">55+</div>
-        <div class="chip" data-value="כל הגילאים" data-type="all">כל הגילאים</div>
-        <div class="chip" data-value="לא יודע" data-type="all">לא יודע</div>
-      </div>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <div class="field-group">
-      <label class="field-label">מיקום גיאוגרפי לשיווק</label>
-      <div class="chips-container" style="margin-bottom: 12px;" id="locationQuickChips">
-        <div class="chip location-quick" data-value="כל ישראל">כל ישראל</div>
-        <div class="chip location-quick" data-value="גלובלי">גלובלי</div>
-      </div>
-      <div class="location-search-wrap">
-        <input type="text" id="locationSearch" list="locationsList" placeholder="חפשו עיר או מדינה...">
-        <button type="button" class="btn-add-location" id="addLocationBtn">הוסף</button>
-      </div>
-      <datalist id="locationsList">
-        <option value="תל אביב">
-        <option value="ירושלים">
-        <option value="חיפה">
-        <option value="באר שבע">
-        <option value="נתניה">
-        <option value="אשדוד">
-        <option value="פתח תקווה">
-        <option value="רמת גן">
-        <option value="ראשון לציון">
-        <option value="הרצליה">
-        <option value="כפר סבא">
-        <option value="רחובות">
-        <option value="אילת">
-        <option value="עפולה">
-        <option value="טבריה">
-        <option value="נצרת">
-        <option value="עכו">
-        <option value="צפת">
-        <option value="מודיעין">
-        <option value="רעננה">
-        <option value="הוד השרון">
-        <option value="גבעתיים">
-        <option value="בני ברק">
-        <option value="בת ים">
-        <option value="חולון">
-        <option value="לוד">
-        <option value="רמלה">
-        <option value="קריית שמונה">
-        <option value="ארה&quot;ב">
-        <option value="אירופה">
-        <option value="בריטניה">
-        <option value="גרמניה">
-        <option value="צרפת">
-        <option value="קנדה">
-        <option value="אוסטרליה">
-      </datalist>
-      <div class="location-tags" id="locationTags"></div>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <div class="field-group">
-      <label class="field-label">שפה עיקרית</label>
-      <div class="chips-container" id="langChips">
-        <div class="chip lang-chip" data-value="עברית">עברית</div>
-        <div class="chip lang-chip" data-value="אנגלית">אנגלית</div>
-        <div class="chip lang-chip" data-value="ערבית">ערבית</div>
-        <div class="chip lang-chip" data-value="רוסית">רוסית</div>
-        <div class="chip lang-chip" data-value="אחר">אחר</div>
-      </div>
-      <div class="other-lang-input" id="otherLangWrap">
-        <input type="text" id="otherLang" placeholder="הקלידו את השפה...">
-      </div>
-    </div>
-
-    <div class="nav-buttons">
-      <button type="button" class="btn btn-secondary" onclick="prevPage()">→ חזרה</button>
-      <button type="button" class="btn btn-primary" onclick="nextPage()">המשך ←</button>
+  <div class="field-group">
+    <label>פלטפורמת האתר</label>
+    <div class="chips" data-single="true" data-field="websitePlatform">
+      <div class="chip" data-value="Shopify">Shopify</div>
+      <div class="chip" data-value="WooCommerce">WooCommerce</div>
+      <div class="chip" data-value="WordPress">WordPress</div>
+      <div class="chip" data-value="Wix">Wix</div>
+      <div class="chip" data-value="Custom">Custom</div>
+      <div class="chip" data-value="אין אתר">אין אתר</div>
     </div>
   </div>
 
-  <!-- ════════════════ PAGE 4: מתחרים ════════════════ -->
-  <div class="form-page" data-page="4">
-    <h1 class="page-title">מתחרים</h1>
-    <p class="page-subtitle">מי המתחרים המרכזיים שלכם?</p>
-
-    <div class="field-group">
-      <label class="field-label">מתחרים ישירים <span class="optional">(שמות עסקים או קישורים)</span></label>
-      <div id="competitorsContainer">
-        <div class="competitor-entry" data-index="0">
-          <input type="text" class="competitor-input" placeholder="שם מתחרה או קישור לעמוד שלו">
-        </div>
-      </div>
-      <button type="button" class="btn-add" id="addCompetitorBtn">
-        <span>+</span> הוסף מתחרה
-      </button>
+  <div class="field-group">
+    <label>רשתות חברתיות</label>
+    <!-- Facebook -->
+    <div class="social-input-wrap">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12S0 5.446 0 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </span>
+      <input type="url" id="socialFacebook" placeholder="Facebook Page URL">
     </div>
-
-    <div class="field-group">
-      <label class="field-label">מה מבדיל אתכם מהמתחרים? <span class="optional">(אופציונלי)</span></label>
-      <textarea id="differentiator" placeholder="מה הייחוד שלכם? למה לקוח יבחר בכם ולא במתחרה?"></textarea>
+    <!-- Instagram -->
+    <div class="social-input-wrap">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24"><defs><radialGradient id="igGrad" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><path fill="url(#igGrad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </span>
+      <input type="url" id="socialInstagram" placeholder="Instagram Profile URL">
     </div>
-
-    <div class="field-group">
-      <label class="field-label">האם יש מתחרה שהתוכן שלו מוצא חן בעיניכם? <span class="optional">(אופציונלי)</span></label>
-      <textarea id="inspiredBy" placeholder="שם העסק + מה בדיוק אהבתם (סגנון, תדירות, סוג תוכן...)"></textarea>
+    <!-- TikTok -->
+    <div class="social-input-wrap">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24"><path fill="#25F4EE" d="M16.6 5.82s.51.64 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/><path fill="#FE2C55" d="M16.6 5.82s.51.64 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z" opacity="0.5"/><path fill="#fff" d="M15.04 3h-2.59v12.4a2.59 2.59 0 0 1-2.59 2.5c-.56 0-1.08-.18-1.5-.48a2.59 2.59 0 0 0 4.09-2.12V3h2.59z" opacity="0"/></svg>
+      </span>
+      <input type="url" id="socialTikTok" placeholder="TikTok Profile URL">
     </div>
-
-    <div class="nav-buttons">
-      <button type="button" class="btn btn-secondary" onclick="prevPage()">→ חזרה</button>
-      <button type="button" class="btn btn-primary" onclick="nextPage()">המשך ←</button>
+    <!-- YouTube -->
+    <div class="social-input-wrap">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </span>
+      <input type="url" id="socialYouTube" placeholder="YouTube Channel URL">
     </div>
-  </div>
-
-  <!-- ════════════════ PAGE 5: יעדים ואסטרטגיה ════════════════ -->
-  <div class="form-page" data-page="5">
-    <h1 class="page-title">יעדים ואסטרטגיה</h1>
-    <p class="page-subtitle">מה אתם רוצים להשיג?</p>
-
-    <div class="field-group">
-      <label class="field-label">מטרות עיקריות</label>
-      <div class="checkbox-group" id="goalsGroup">
-        <label class="checkbox-item" data-value="מודעות למותג">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> מודעות למותג
-        </label>
-        <label class="checkbox-item" data-value="לידים / פניות">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> לידים / פניות
-        </label>
-        <label class="checkbox-item" data-value="מכירות ישירות">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> מכירות ישירות
-        </label>
-        <label class="checkbox-item" data-value="תנועה לאתר">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> תנועה לאתר
-        </label>
-        <label class="checkbox-item" data-value="בניית קהילה">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> בניית קהילה
-        </label>
-        <label class="checkbox-item" data-value="גיוס עובדים">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> גיוס עובדים
-        </label>
-      </div>
+    <!-- LinkedIn -->
+    <div class="social-input-wrap">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </span>
+      <input type="url" id="socialLinkedIn" placeholder="LinkedIn Page URL">
     </div>
-
-    <div class="section-divider"></div>
-
-    <div class="field-group">
-      <label class="field-label">תקציב חודשי משוער לשיווק דיגיטלי</label>
-      <div class="budget-options" id="budgetOptions">
-        <div class="budget-option" data-value="עד 3,000 ₪">עד 3,000 ₪</div>
-        <div class="budget-option" data-value="3,000 - 7,000 ₪">3,000 - 7,000 ₪</div>
-        <div class="budget-option" data-value="7,000 - 15,000 ₪">7,000 - 15,000 ₪</div>
-        <div class="budget-option" data-value="15,000 - 30,000 ₪">15,000 - 30,000 ₪</div>
-        <div class="budget-option" data-value="30,000 ₪+">30,000 ₪+</div>
-        <div class="budget-option" data-value="לא הוגדר עדיין">לא הוגדר עדיין</div>
-      </div>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <div class="field-group">
-      <label class="field-label">הערות נוספות <span class="optional">(אופציונלי)</span></label>
-      <textarea id="strategyNotes" placeholder="משהו נוסף שחשוב לכם שנדע? ציפיות, מגבלות, תאריכי יעד..."></textarea>
-    </div>
-
-    <div class="nav-buttons">
-      <button type="button" class="btn btn-secondary" onclick="prevPage()">→ חזרה</button>
-      <button type="button" class="btn btn-primary" onclick="nextPage()">המשך ←</button>
+    <!-- Threads -->
+    <div class="social-input-wrap">
+      <span class="social-icon">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.59 12c.025 3.086.718 5.496 2.057 7.164 1.432 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.343-.783-.98-1.404-1.81-1.83a9.46 9.46 0 0 1-.164 1.675c-.36 1.778-1.163 3.186-2.32 4.066-1.062.808-2.42 1.233-3.936 1.233h-.03c-1.29-.007-2.42-.39-3.266-1.107-1.004-.852-1.56-2.1-1.565-3.514.009-2.725 1.89-4.627 4.576-4.627.69 0 1.344.105 1.94.313-.024-.92-.169-1.726-.433-2.398-.584-1.49-1.68-2.28-3.258-2.352a5.835 5.835 0 0 0-2.81.589l-.845-1.833A7.782 7.782 0 0 1 12.192 4c2.325.094 4.07 1.21 4.918 3.149.414.947.66 2.064.735 3.334 1.227.57 2.183 1.4 2.793 2.481.886 1.573.987 4.136-.944 6.082C17.937 20.82 15.69 21.98 12.186 24zm-.09-9.963c-1.783 0-2.648 1.178-2.652 2.507.003.87.327 1.555.912 1.95.514.349 1.18.528 1.92.532 1.997-.04 3.404-1.237 3.756-3.3a7.263 7.263 0 0 0 .08-.88c-.756-.346-1.62-.577-2.56-.701a8.2 8.2 0 0 0-1.456-.108z"/></svg>
+      </span>
+      <input type="url" id="socialThreads" placeholder="Threads Profile URL">
     </div>
   </div>
 
-  <!-- ════════════════ PAGE 6: גישה טכנית ════════════════ -->
-  <div class="form-page" data-page="6">
-    <h1 class="page-title">גישה טכנית</h1>
-    <p class="page-subtitle">פרטים אחרונים לפני שמתחילים</p>
+  <div class="divider"></div>
 
-    <div class="field-group">
-      <label class="field-label">שם איש קשר</label>
-      <input type="text" id="contactName" placeholder="השם המלא של איש הקשר">
+  <div class="field-group">
+    <label>WhatsApp Business</label>
+    <div class="toggle-group" data-field="whatsappBusiness">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
     </div>
-
-    <div class="field-group">
-      <label class="field-label">טלפון</label>
-      <input type="tel" id="contactPhone" placeholder="050-0000000" dir="ltr" style="text-align:left;">
+    <div class="reveal" id="whatsappReveal">
+      <input type="tel" id="whatsappNumber" placeholder="מספר WhatsApp Business" style="direction:ltr;text-align:left">
     </div>
+  </div>
 
-    <div class="field-group">
-      <label class="field-label">אימייל</label>
-      <input type="email" id="contactEmail" placeholder="email@example.com" dir="ltr" style="text-align:left;">
+  <div class="field-group">
+    <label>Google Business Profile</label>
+    <div class="toggle-group" data-field="googleBusiness">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="לא יודע" onclick="selectToggle(this)">לא יודע</div>
     </div>
+  </div>
 
-    <div class="section-divider"></div>
+  <div class="field-group">
+    <label>חנות דיגיטלית</label>
+    <div class="chips" data-field="digitalShop">
+      <div class="chip" data-value="TikTok Shop">TikTok Shop</div>
+      <div class="chip" data-value="Instagram Shopping">Instagram Shopping</div>
+      <div class="chip" data-value="YouTube Shopping">YouTube Shopping</div>
+      <div class="chip" data-value="Shopify">Shopify</div>
+      <div class="chip" data-value="אין">אין</div>
+    </div>
+  </div>
+</div>
 
-    <div class="field-group">
-      <label class="field-label">האם יש גישה לחשבונות הפרסום?</label>
-      <div class="checkbox-group" id="accessGroup">
-        <label class="checkbox-item" data-value="Facebook Ads">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> Facebook Ads
-        </label>
-        <label class="checkbox-item" data-value="Google Ads">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> Google Ads
-        </label>
-        <label class="checkbox-item" data-value="TikTok Ads">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> TikTok Ads
-        </label>
-        <label class="checkbox-item" data-value="Google Analytics">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> Google Analytics
-        </label>
-        <label class="checkbox-item" data-value="אין גישה כרגע">
-          <input type="checkbox"> <div class="check-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div> אין גישה כרגע
-        </label>
+<!-- ========== PAGE 3: קהל יעד ========== -->
+<div class="page" data-page="3">
+  <h2 class="page-title">קהל יעד</h2>
+  <p class="page-subtitle">מי הלקוחות שלכם?</p>
+
+  <div class="field-group">
+    <label>טווח גילאים</label>
+    <div class="chips" data-field="ageRange" data-exclusive="כל הגילאים,לא יודע">
+      <div class="chip" data-value="18-24">18-24</div>
+      <div class="chip" data-value="25-34">25-34</div>
+      <div class="chip" data-value="35-44">35-44</div>
+      <div class="chip" data-value="45-54">45-54</div>
+      <div class="chip" data-value="55+">55+</div>
+      <div class="chip" data-value="כל הגילאים">כל הגילאים</div>
+      <div class="chip" data-value="לא יודע">לא יודע</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>מגדר</label>
+    <div class="chips" data-single="true" data-field="gender">
+      <div class="chip" data-value="גברים">גברים</div>
+      <div class="chip" data-value="נשים">נשים</div>
+      <div class="chip" data-value="שניהם">שניהם</div>
+      <div class="chip" data-value="לא רלוונטי">לא רלוונטי</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>מיקום גיאוגרפי לשיווק</label>
+    <div class="location-selector">
+      <div class="chips" data-field="locationQuick">
+        <div class="chip" data-value="כל ישראל" onclick="selectLocationQuick(this)">כל ישראל</div>
+        <div class="chip" data-value="גלובלי" onclick="selectLocationQuick(this)">גלובלי</div>
+      </div>
+      <div class="location-input-wrap">
+        <input type="text" id="locationSearch" list="locationList" placeholder="חפשו עיר או מדינה..." oninput="handleLocationInput(event)" onkeydown="if(event.key==='Enter'){event.preventDefault();addLocationFromInput()}">
+        <datalist id="locationList">
+          <option value="תל אביב"><option value="ירושלים"><option value="חיפה"><option value="באר שבע">
+          <option value="נתניה"><option value="אשדוד"><option value="פתח תקווה"><option value="רמת גן">
+          <option value="ראשון לציון"><option value="הרצליה"><option value="כפר סבא"><option value="רחובות">
+          <option value="אילת"><option value="עפולה"><option value="טבריה"><option value="נצרת">
+          <option value="עכו"><option value="צפת"><option value="מודיעין"><option value="רעננה">
+          <option value="הוד השרון"><option value="גבעתיים"><option value="בני ברק"><option value="בת ים">
+          <option value="חולון"><option value="ארה&quot;ב"><option value="אירופה"><option value="בריטניה">
+          <option value="גרמניה"><option value="צרפת"><option value="קנדה"><option value="אוסטרליה">
+        </datalist>
+      </div>
+      <div class="location-pills" id="locationPills"></div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>שפה עיקרית</label>
+    <div class="chips" data-single="true" data-field="language">
+      <div class="chip" data-value="עברית">עברית</div>
+      <div class="chip" data-value="אנגלית">אנגלית</div>
+      <div class="chip" data-value="ערבית">ערבית</div>
+      <div class="chip" data-value="רוסית">רוסית</div>
+      <div class="chip" data-value="אחר" onclick="toggleOtherLang(this)">אחר</div>
+    </div>
+    <div class="reveal" id="otherLangReveal">
+      <input type="text" id="otherLanguage" placeholder="ציינו את השפה...">
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>תארו את הלקוח האידיאלי שלכם</label>
+    <textarea id="idealCustomer" placeholder="מה הכאבים שלו? מה הוא מחפש? איפה הוא נמצא אונליין?"></textarea>
+  </div>
+</div>
+
+<!-- ========== PAGE 4: מתחרים ========== -->
+<div class="page" data-page="4">
+  <h2 class="page-title">מתחרים</h2>
+  <p class="page-subtitle">מי המתחרים שלכם ומי משפיע עליכם?</p>
+
+  <div class="field-group">
+    <label>מתחרים ישירים</label>
+    <div class="dynamic-fields" id="directCompetitors">
+      <div class="dynamic-field">
+        <input type="text" placeholder="שם העסק או לינק לפרופיל">
+      </div>
+      <div class="dynamic-field">
+        <input type="text" placeholder="שם העסק או לינק לפרופיל">
       </div>
     </div>
+    <button class="add-field-btn" onclick="addDynamicField('directCompetitors', 'שם העסק או לינק לפרופיל')">+ הוסף מתחרה</button>
+  </div>
 
-    <div class="field-group">
-      <label class="field-label">הערות לגבי גישות <span class="optional">(אופציונלי)</span></label>
-      <textarea id="accessNotes" placeholder="פרטים נוספים לגבי גישה לחשבונות, CRM, אתר וכו׳"></textarea>
+  <div class="field-group">
+    <label>מתחרים שמעריצים (מותגים להשראה)</label>
+    <div class="dynamic-fields" id="inspiredBrands">
+      <div class="dynamic-field">
+        <input type="text" placeholder="שם המותג או לינק">
+      </div>
     </div>
+    <button class="add-field-btn" onclick="addDynamicField('inspiredBrands', 'שם המותג או לינק')">+ הוסף מותג</button>
+  </div>
 
-    <div class="nav-buttons" style="margin-top: 32px;">
-      <button type="button" class="btn btn-secondary" onclick="prevPage()">→ חזרה</button>
-    </div>
-    <div style="margin-top: 16px;">
-      <button type="button" class="btn btn-submit" onclick="submitForm()">🚀 שליחת הטופס</button>
+  <div class="field-group">
+    <label>מה המתחרים עושים טוב?</label>
+    <textarea id="competitorStrengths" placeholder="מה בולט אצלם? תוכן, עיצוב, תדירות, קהילה..."></textarea>
+  </div>
+
+  <div class="field-group">
+    <label>מה חסר בשוק שלכם?</label>
+    <textarea id="marketGap" placeholder="מה אף אחד לא עושה? איזה צורך לא נענה?"></textarea>
+  </div>
+
+  <div class="field-group">
+    <label>האם יש מודעות של מתחרים שתפסו את העין?</label>
+    <textarea id="competitorAds" placeholder="תארו או שתפו לינקים..."></textarea>
+  </div>
+</div>
+
+<!-- ========== PAGE 5: יעדים ותקציב ========== -->
+<div class="page" data-page="5">
+  <h2 class="page-title">יעדים ותקציב</h2>
+  <p class="page-subtitle">לאן אתם רוצים להגיע?</p>
+
+  <div class="field-group">
+    <label>מטרות עיקריות</label>
+    <div class="chips" data-field="goals">
+      <div class="chip" data-value="צמיחה ועוקבים">📈 צמיחה ועוקבים</div>
+      <div class="chip" data-value="לידים">🧲 לידים</div>
+      <div class="chip" data-value="מכירות ישירות">💰 מכירות ישירות</div>
+      <div class="chip" data-value="מודעות למותג">👁 מודעות למותג</div>
+      <div class="chip" data-value="מעורבות וקהילה">💬 מעורבות וקהילה</div>
+      <div class="chip" data-value="e-commerce">🛒 e-commerce</div>
     </div>
   </div>
 
-  <!-- ════════════════ SUCCESS SCREEN ════════════════ -->
-  <div class="success-screen" id="successScreen">
-    <div class="success-icon">
-      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <div class="field-group">
+    <label>סוג פעילות</label>
+    <div class="toggle-group" data-field="activityType">
+      <div class="toggle-option" data-value="אורגני" onclick="selectToggle(this)">🌱 אורגני</div>
+      <div class="toggle-option" data-value="ממומן" onclick="selectToggle(this)">💳 ממומן</div>
+      <div class="toggle-option" data-value="שניהם" onclick="selectToggle(this)">⚡ שניהם</div>
     </div>
-    <h2>הטופס נשלח בהצלחה!</h2>
-    <p>תודה רבה! קיבלנו את הפרטים שלכם.<br>צוות 11Agency ייצור איתכם קשר בהקדם.</p>
   </div>
 
+  <div class="field-group">
+    <label>פלטפורמות בעדיפות</label>
+    <div class="chips" data-field="priorityPlatforms">
+      <div class="chip brand-facebook" data-value="Facebook">Facebook</div>
+      <div class="chip brand-instagram" data-value="Instagram">Instagram</div>
+      <div class="chip brand-tiktok" data-value="TikTok">TikTok</div>
+      <div class="chip brand-youtube" data-value="YouTube">YouTube</div>
+      <div class="chip brand-linkedin" data-value="LinkedIn">LinkedIn</div>
+      <div class="chip" data-value="כולן">כולן</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>תקציב פרסום חודשי</label>
+    <div class="chips" data-single="true" data-field="monthlyBudget">
+      <div class="chip" data-value="אין תקציב">אין תקציב</div>
+      <div class="chip" data-value="₪1,000-5,000">₪1,000-5,000</div>
+      <div class="chip" data-value="₪5,000-15,000">₪5,000-15,000</div>
+      <div class="chip" data-value="₪15,000-50,000">₪15,000-50,000</div>
+      <div class="chip" data-value="₪50,000+">₪50,000+</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>יעדי זמן</label>
+    <div class="chips" data-single="true" data-field="timeline">
+      <div class="chip" data-value="3 חודשים">3 חודשים</div>
+      <div class="chip" data-value="6 חודשים">6 חודשים</div>
+      <div class="chip" data-value="12 חודשים">12 חודשים</div>
+      <div class="chip" data-value="לא הגדרתי">לא הגדרתי</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE 6: נכסי מותג ותוכן ========== -->
+<div class="page" data-page="6">
+  <h2 class="page-title">נכסי מותג ותוכן</h2>
+  <p class="page-subtitle">מה יש לכם כבר?</p>
+
+  <div class="field-group">
+    <label>יש לכם Brand Guidelines?</label>
+    <div class="toggle-group" data-field="brandGuidelines">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="חלקי" onclick="selectToggle(this)">חלקי</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>נכסי תוכן קיימים</label>
+    <div class="chips" data-field="existingAssets">
+      <div class="chip" data-value="ספריית תמונות">ספריית תמונות</div>
+      <div class="chip" data-value="סרטונים">סרטונים</div>
+      <div class="chip" data-value="תוכן UGC">תוכן UGC</div>
+      <div class="chip" data-value="לוגו בפורמטים שונים">לוגו בפורמטים שונים</div>
+      <div class="chip" data-value="אין כלום">אין כלום</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>עבדתם עם משפיענים בעבר?</label>
+    <div class="toggle-group" data-field="influencers">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this); toggleReveal('influencerReveal', this.dataset.value === 'כן')">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this); toggleReveal('influencerReveal', false)">לא</div>
+    </div>
+    <div class="reveal" id="influencerReveal">
+      <textarea id="influencerDetails" placeholder="ספרו על הניסיון — עם מי עבדתם, מה עבד, מה לא..."></textarea>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>יש לכם צוות צילום/תוכן?</label>
+    <div class="toggle-group" data-field="contentTeam">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="outsource" onclick="selectToggle(this)">Outsource</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>מה הסגנון שמתאים למותג?</label>
+    <div class="chips" data-field="brandStyle">
+      <div class="chip" data-value="מקצועי ונקי">מקצועי ונקי</div>
+      <div class="chip" data-value="צעיר ודינמי">צעיר ודינמי</div>
+      <div class="chip" data-value="יוקרתי ופרימיום">יוקרתי ופרימיום</div>
+      <div class="chip" data-value="קליל והומוריסטי">קליל והומוריסטי</div>
+      <div class="chip" data-value="חינוכי ואינפורמטיבי">חינוכי ואינפורמטיבי</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE 7: מצב פרסום נוכחי ========== -->
+<div class="page" data-page="7">
+  <h2 class="page-title">מצב פרסום נוכחי</h2>
+  <p class="page-subtitle">מה קורה כרגע?</p>
+
+  <div class="field-group">
+    <label>יש קמפיינים ממומנים פעילים?</label>
+    <div class="toggle-group" data-field="activeCampaigns">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this); toggleReveal('adPlatformsReveal', this.dataset.value !== 'לא')">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this); toggleReveal('adPlatformsReveal', false)">לא</div>
+      <div class="toggle-option" data-value="היו בעבר" onclick="selectToggle(this); toggleReveal('adPlatformsReveal', this.dataset.value !== 'לא')">היו בעבר</div>
+    </div>
+    <div class="reveal" id="adPlatformsReveal">
+      <label class="field-label" style="margin-top:8px">באילו פלטפורמות?</label>
+      <div class="chips" data-field="adPlatforms">
+        <div class="chip" data-value="Meta">Meta</div>
+        <div class="chip" data-value="TikTok">TikTok</div>
+        <div class="chip" data-value="Google/YouTube">Google/YouTube</div>
+        <div class="chip" data-value="LinkedIn">LinkedIn</div>
+        <div class="chip" data-value="אחר">אחר</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>ROAS נוכחי <span class="optional">(אם ידוע)</span></label>
+    <input type="text" id="currentROAS" placeholder="לדוגמה: 3.5×" style="direction:ltr;text-align:left">
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field-group">
+    <label>Meta Pixel מותקן?</label>
+    <div class="toggle-group" data-field="metaPixel">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="לא יודע" onclick="selectToggle(this)">לא יודע</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>CAPI (Server-Side) מוגדר?</label>
+    <div class="toggle-group" data-field="capi">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="לא יודע" onclick="selectToggle(this)">לא יודע</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>TikTok Pixel מותקן?</label>
+    <div class="toggle-group" data-field="tiktokPixel">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="לא יודע" onclick="selectToggle(this)">לא יודע</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>Google Ads Conversion Tracking?</label>
+    <div class="toggle-group" data-field="googleTracking">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="לא יודע" onclick="selectToggle(this)">לא יודע</div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>GA4 מותקן?</label>
+    <div class="toggle-group" data-field="ga4">
+      <div class="toggle-option" data-value="כן" onclick="selectToggle(this)">כן</div>
+      <div class="toggle-option" data-value="לא" onclick="selectToggle(this)">לא</div>
+      <div class="toggle-option" data-value="לא יודע" onclick="selectToggle(this)">לא יודע</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE 8: גישות טכניות + שליחה ========== -->
+<div class="page" data-page="8">
+  <h2 class="page-title">גישות טכניות + שליחה</h2>
+  <p class="page-subtitle">כדי שנוכל להתחיל לעבוד, נצטרך גישה לפלטפורמות הבאות:</p>
+
+  <div class="checkbox-group">
+    <h4>Meta</h4>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Meta Business Manager (Admin)">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Meta Business Manager (Admin)</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Meta Ads Manager">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Meta Ads Manager</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Facebook Page (Admin)">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Facebook Page (Admin)</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Instagram Account (Admin)">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Instagram Account (Admin)</span>
+    </div>
+  </div>
+
+  <div class="checkbox-group">
+    <h4>TikTok</h4>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="TikTok Business Center">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">TikTok Business Center</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="TikTok Ads Manager">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">TikTok Ads Manager</span>
+    </div>
+  </div>
+
+  <div class="checkbox-group">
+    <h4>Google</h4>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Google Ads (Admin/MCC)">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Google Ads (Admin/MCC)</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="YouTube Studio">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">YouTube Studio</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="GA4">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">GA4</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Google Tag Manager">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Google Tag Manager</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Google Search Console">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Google Search Console</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Google Merchant Center">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Google Merchant Center</span>
+    </div>
+  </div>
+
+  <div class="checkbox-group">
+    <h4>אתר</h4>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Admin access לאתר">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Admin access לאתר</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="DNS Records">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">DNS Records</span>
+    </div>
+  </div>
+
+  <div class="checkbox-group">
+    <h4>CRM + Data</h4>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="CRM (export)">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">CRM (export)</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="Email Marketing Platform">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">Email Marketing Platform</span>
+    </div>
+    <div class="custom-checkbox" onclick="toggleCheckbox(this)" data-value="רשימות לקוחות">
+      <div class="cb-box"><svg class="cb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="cb-label">רשימות לקוחות</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field-group">
+    <label>פרטי איש קשר</label>
+    <input type="text" id="contactName" placeholder="שם מלא" style="margin-bottom:10px">
+    <input type="tel" id="contactPhone" placeholder="טלפון" style="margin-bottom:10px;direction:ltr;text-align:left">
+    <input type="email" id="contactEmail" placeholder="אימייל" style="direction:ltr;text-align:left">
+  </div>
+
+  <div class="field-group">
+    <label>הערות נוספות</label>
+    <textarea id="notes" placeholder="משהו נוסף שחשוב לכם שנדע?"></textarea>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#0F0F1A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+  <h2>השאלון נשלח בהצלחה! 🎉</h2>
+  <p>תודה שמילאתם את השאלון. הצוות שלנו ייצור איתכם קשר בקרוב כדי להתחיל.</p>
+</div>
+
+</div><!-- /form-wrapper -->
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar" id="navBar">
+  <div class="nav-inner">
+    <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()" style="display:none">← הקודם</button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">הבא →</button>
+    <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" style="display:none">🚀 שליחת השאלון</button>
+  </div>
 </div>
 
 <script>
 const WEBHOOK_URL = '';
+const TOTAL_STEPS = 8;
+let currentStep = 1;
+let formData = {};
+let selectedLocations = [];
 
-let currentPage = 1;
-const totalPages = 6;
-const pageLabels = ['פרטי העסק', 'נוכחות דיגיטלית', 'קהל יעד', 'מתחרים', 'יעדים ואסטרטגיה', 'גישה טכנית'];
-
-// ── State ──
-const state = {
-  selectedAges: [],
-  selectedLocations: [],
-  locationQuick: null,
-  selectedLang: null,
-  selectedGoals: [],
-  selectedBudget: null,
-  selectedAccess: []
-};
-
-// ── Navigation ──
-function updateProgress() {
-  document.querySelectorAll('.progress-step').forEach((step, i) => {
-    step.classList.remove('active', 'completed');
-    if (i + 1 === currentPage) step.classList.add('active');
-    else if (i + 1 < currentPage) step.classList.add('completed');
-  });
-  document.getElementById('progressLabel').textContent = pageLabels[currentPage - 1];
-  document.getElementById('stepCounter').textContent = `${currentPage} / ${totalPages}`;
-}
-
-function showPage(num) {
-  document.querySelectorAll('.form-page').forEach(p => {
-    p.classList.remove('active');
-    p.style.display = 'none';
-  });
-  const page = document.querySelector(`.form-page[data-page="${num}"]`);
-  if (page) {
-    page.style.display = 'block';
-    // Force reflow for animation
-    void page.offsetWidth;
-    page.classList.add('active');
-  }
-  currentPage = num;
+// ===== NAVIGATION =====
+function goToStep(step) {
+  if (step < 1 || step > TOTAL_STEPS) return;
+  if (step > currentStep + 1) return; // can only go forward one or back
+  
+  // Validate current step before moving forward
+  if (step > currentStep && !validateStep(currentStep)) return;
+  
+  const currentPage = document.querySelector(`.page[data-page="${currentStep}"]`);
+  const targetPage = document.querySelector(`.page[data-page="${step}"]`);
+  
+  currentPage.classList.remove('active');
+  targetPage.classList.add('active');
+  
+  currentStep = step;
   updateProgress();
+  updateNav();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function nextPage() {
-  if (currentPage === 1) {
+function nextStep() {
+  goToStep(currentStep + 1);
+}
+
+function prevStep() {
+  goToStep(currentStep - 1);
+}
+
+function updateProgress() {
+  const pct = ((currentStep - 1) / (TOTAL_STEPS - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  
+  document.querySelectorAll('.step-dot').forEach(dot => {
+    const s = parseInt(dot.dataset.step);
+    dot.classList.remove('active', 'completed');
+    if (s === currentStep) dot.classList.add('active');
+    else if (s < currentStep) dot.classList.add('completed');
+  });
+  
+  document.querySelectorAll('.step-label').forEach(label => {
+    const s = parseInt(label.dataset.step);
+    label.classList.remove('active', 'completed');
+    if (s === currentStep) label.classList.add('active');
+    else if (s < currentStep) label.classList.add('completed');
+  });
+}
+
+function updateNav() {
+  const prev = document.getElementById('prevBtn');
+  const next = document.getElementById('nextBtn');
+  const submit = document.getElementById('submitBtn');
+  
+  prev.style.display = currentStep === 1 ? 'none' : 'flex';
+  next.style.display = currentStep === TOTAL_STEPS ? 'none' : 'flex';
+  submit.style.display = currentStep === TOTAL_STEPS ? 'flex' : 'none';
+}
+
+// ===== VALIDATION =====
+function validateStep(step) {
+  if (step === 1) {
     const name = document.getElementById('businessName');
+    const err = document.getElementById('businessNameError');
     if (!name.value.trim()) {
       name.classList.add('error');
-      document.getElementById('businessNameError').classList.add('visible');
+      err.classList.add('show');
       name.focus();
-      return;
+      return false;
     }
     name.classList.remove('error');
-    document.getElementById('businessNameError').classList.remove('visible');
+    err.classList.remove('show');
   }
-  if (currentPage < totalPages) showPage(currentPage + 1);
+  return true;
 }
 
-function prevPage() {
-  if (currentPage > 1) showPage(currentPage - 1);
-}
-
-// ── Services dynamic fields ──
-let serviceCount = 1;
-document.getElementById('addServiceBtn').addEventListener('click', () => {
-  const container = document.getElementById('servicesContainer');
-  const entry = document.createElement('div');
-  entry.className = 'service-entry';
-  entry.dataset.index = serviceCount++;
-  entry.innerHTML = `
-    <input type="text" class="service-input" placeholder="שירות נוסף...">
-    <button type="button" class="btn-remove" onclick="removeService(this)">×</button>
-  `;
-  container.appendChild(entry);
-  entry.querySelector('input').focus();
-});
-
-function removeService(btn) {
-  const entry = btn.closest('.service-entry');
-  entry.classList.add('removing');
-  setTimeout(() => entry.remove(), 300);
-}
-
-// ── Competitors dynamic fields ──
-let competitorCount = 1;
-document.getElementById('addCompetitorBtn').addEventListener('click', () => {
-  const container = document.getElementById('competitorsContainer');
-  const entry = document.createElement('div');
-  entry.className = 'competitor-entry';
-  entry.dataset.index = competitorCount++;
-  entry.innerHTML = `
-    <input type="text" class="competitor-input" placeholder="שם מתחרה או קישור">
-    <button type="button" class="btn-remove" onclick="removeCompetitor(this)">×</button>
-  `;
-  container.appendChild(entry);
-  entry.querySelector('input').focus();
-});
-
-function removeCompetitor(btn) {
-  const entry = btn.closest('.competitor-entry');
-  entry.classList.add('removing');
-  setTimeout(() => entry.remove(), 300);
-}
-
-// ── Age Chips ──
-document.querySelectorAll('#ageChips .chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const val = chip.dataset.value;
-    const type = chip.dataset.type;
-
-    if (type === 'all') {
-      // Deselect all others, toggle this
-      document.querySelectorAll('#ageChips .chip').forEach(c => c.classList.remove('selected'));
-      if (!state.selectedAges.includes(val)) {
-        chip.classList.add('selected');
-        state.selectedAges = [val];
+// ===== CHIPS =====
+document.querySelectorAll('.chips').forEach(container => {
+  container.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      const isSingle = container.dataset.single === 'true';
+      const exclusiveStr = container.dataset.exclusive;
+      const val = this.dataset.value;
+      
+      if (isSingle) {
+        container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+      } else if (exclusiveStr) {
+        const exclusives = exclusiveStr.split(',');
+        if (exclusives.includes(val)) {
+          // Clicking an exclusive option deselects all others
+          container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          this.classList.add('selected');
+        } else {
+          // Clicking a specific deselects exclusives
+          container.querySelectorAll('.chip').forEach(c => {
+            if (exclusives.includes(c.dataset.value)) c.classList.remove('selected');
+          });
+          this.classList.toggle('selected');
+        }
       } else {
-        state.selectedAges = [];
+        this.classList.toggle('selected');
       }
-    } else {
-      // Deselect "all" types
-      document.querySelectorAll('#ageChips .chip[data-type="all"]').forEach(c => c.classList.remove('selected'));
-      state.selectedAges = state.selectedAges.filter(v => v !== 'כל הגילאים' && v !== 'לא יודע');
-
-      if (chip.classList.contains('selected')) {
-        chip.classList.remove('selected');
-        state.selectedAges = state.selectedAges.filter(v => v !== val);
-      } else {
-        chip.classList.add('selected');
-        state.selectedAges.push(val);
-      }
-    }
+    });
   });
 });
 
-// ── Location Quick Chips ──
-document.querySelectorAll('.location-quick').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const val = chip.dataset.value;
-    const wasSelected = chip.classList.contains('selected');
-
-    document.querySelectorAll('.location-quick').forEach(c => c.classList.remove('selected'));
-    document.getElementById('locationTags').innerHTML = '';
-    state.selectedLocations = [];
-
-    if (!wasSelected) {
-      chip.classList.add('selected');
-      state.locationQuick = val;
-    } else {
-      state.locationQuick = null;
-    }
-  });
-});
-
-// ── Location Add ──
-function addLocation(val) {
-  val = val.trim();
-  if (!val || state.selectedLocations.includes(val)) return;
-
-  // Clear quick chips when adding specific
-  document.querySelectorAll('.location-quick').forEach(c => c.classList.remove('selected'));
-  state.locationQuick = null;
-
-  state.selectedLocations.push(val);
-  renderLocationTags();
-  document.getElementById('locationSearch').value = '';
+// ===== TOGGLE GROUP =====
+function selectToggle(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.toggle-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  
+  // WhatsApp reveal
+  if (group.dataset.field === 'whatsappBusiness') {
+    toggleReveal('whatsappReveal', el.dataset.value === 'כן');
+  }
+  
+  // Active campaigns reveal
+  if (group.dataset.field === 'activeCampaigns') {
+    toggleReveal('adPlatformsReveal', el.dataset.value !== 'לא');
+  }
 }
 
-document.getElementById('addLocationBtn').addEventListener('click', () => {
-  addLocation(document.getElementById('locationSearch').value);
-});
+function toggleReveal(id, show) {
+  const el = document.getElementById(id);
+  if (show) el.classList.add('open');
+  else el.classList.remove('open');
+}
 
-document.getElementById('locationSearch').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    addLocation(e.target.value);
+// ===== DYNAMIC FIELDS =====
+function addDynamicField(containerId, placeholder) {
+  const container = document.getElementById(containerId);
+  const field = document.createElement('div');
+  field.className = 'dynamic-field';
+  field.innerHTML = `
+    <input type="text" placeholder="${placeholder}">
+    <button class="remove-field" onclick="removeDynamicField(this)">×</button>
+  `;
+  container.appendChild(field);
+}
+
+function removeDynamicField(btn) {
+  const field = btn.parentElement;
+  field.style.opacity = '0';
+  field.style.maxHeight = '0';
+  field.style.marginBottom = '0';
+  field.style.transition = 'all 300ms ease';
+  setTimeout(() => field.remove(), 300);
+}
+
+// ===== LOCATION SELECTOR =====
+function selectLocationQuick(chip) {
+  const val = chip.dataset.value;
+  const container = chip.closest('.chips');
+  
+  // Toggle selection
+  if (chip.classList.contains('selected')) {
+    chip.classList.remove('selected');
+    selectedLocations = selectedLocations.filter(l => l !== val);
+  } else {
+    // Quick chips clear specific locations
+    selectedLocations = [val];
+    container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    document.getElementById('locationPills').innerHTML = '';
   }
-});
+  renderLocationPills();
+}
 
-function renderLocationTags() {
-  const container = document.getElementById('locationTags');
-  container.innerHTML = state.selectedLocations.map((loc, i) => `
-    <div class="location-tag">
+function addLocationFromInput() {
+  const input = document.getElementById('locationSearch');
+  const val = input.value.trim();
+  if (!val || selectedLocations.includes(val)) return;
+  
+  // Clear quick chips
+  document.querySelectorAll('[data-field="locationQuick"] .chip').forEach(c => c.classList.remove('selected'));
+  
+  // Remove quick chip values if present
+  selectedLocations = selectedLocations.filter(l => l !== 'כל ישראל' && l !== 'גלובלי');
+  
+  selectedLocations.push(val);
+  input.value = '';
+  renderLocationPills();
+}
+
+function handleLocationInput(e) {
+  // Auto-add on datalist selection (input event fires after selection)
+  setTimeout(() => {
+    const input = document.getElementById('locationSearch');
+    const options = document.querySelectorAll('#locationList option');
+    const vals = Array.from(options).map(o => o.value);
+    if (vals.includes(input.value)) {
+      addLocationFromInput();
+    }
+  }, 50);
+}
+
+function removeLocation(loc) {
+  selectedLocations = selectedLocations.filter(l => l !== loc);
+  renderLocationPills();
+}
+
+function renderLocationPills() {
+  const container = document.getElementById('locationPills');
+  container.innerHTML = selectedLocations.map(loc => `
+    <div class="location-pill">
       ${loc}
-      <span class="tag-remove" onclick="removeLocation(${i})">×</span>
+      <span class="pill-remove" onclick="removeLocation('${loc}')">×</span>
     </div>
   `).join('');
 }
 
-function removeLocation(index) {
-  state.selectedLocations.splice(index, 1);
-  renderLocationTags();
+// ===== OTHER LANGUAGE =====
+function toggleOtherLang(chip) {
+  const reveal = document.getElementById('otherLangReveal');
+  // Check after chip click handler runs
+  setTimeout(() => {
+    if (chip.classList.contains('selected')) {
+      reveal.classList.add('open');
+      document.getElementById('otherLanguage').focus();
+    } else {
+      reveal.classList.remove('open');
+    }
+  }, 10);
 }
 
-// ── Language Chips (single-select) ──
-document.querySelectorAll('.lang-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const val = chip.dataset.value;
-    document.querySelectorAll('.lang-chip').forEach(c => c.classList.remove('selected'));
-    
-    if (state.selectedLang === val) {
-      state.selectedLang = null;
-    } else {
-      chip.classList.add('selected');
-      state.selectedLang = val;
-    }
+// ===== CHECKBOXES =====
+function toggleCheckbox(el) {
+  el.classList.toggle('checked');
+}
 
-    const otherWrap = document.getElementById('otherLangWrap');
-    if (state.selectedLang === 'אחר') {
-      otherWrap.classList.add('visible');
-      setTimeout(() => document.getElementById('otherLang').focus(), 350);
-    } else {
-      otherWrap.classList.remove('visible');
-    }
-  });
-});
-
-// ── Checkbox Groups ──
-document.querySelectorAll('#goalsGroup .checkbox-item').forEach(item => {
-  item.addEventListener('click', (e) => {
-    e.preventDefault();
-    const val = item.dataset.value;
-    const cb = item.querySelector('input');
-    cb.checked = !cb.checked;
-    item.classList.toggle('selected', cb.checked);
-
-    if (cb.checked) {
-      if (!state.selectedGoals.includes(val)) state.selectedGoals.push(val);
-    } else {
-      state.selectedGoals = state.selectedGoals.filter(v => v !== val);
-    }
-  });
-});
-
-document.querySelectorAll('#accessGroup .checkbox-item').forEach(item => {
-  item.addEventListener('click', (e) => {
-    e.preventDefault();
-    const val = item.dataset.value;
-    const cb = item.querySelector('input');
-    cb.checked = !cb.checked;
-    item.classList.toggle('selected', cb.checked);
-
-    if (cb.checked) {
-      if (!state.selectedAccess.includes(val)) state.selectedAccess.push(val);
-    } else {
-      state.selectedAccess = state.selectedAccess.filter(v => v !== val);
-    }
-  });
-});
-
-// ── Budget Options ──
-document.querySelectorAll('.budget-option').forEach(opt => {
-  opt.addEventListener('click', () => {
-    document.querySelectorAll('.budget-option').forEach(o => o.classList.remove('selected'));
-    if (state.selectedBudget === opt.dataset.value) {
-      state.selectedBudget = null;
-    } else {
-      opt.classList.add('selected');
-      state.selectedBudget = opt.dataset.value;
-    }
-  });
-});
-
-// ── Clear error on input ──
-document.getElementById('businessName').addEventListener('input', function() {
-  this.classList.remove('error');
-  document.getElementById('businessNameError').classList.remove('visible');
-});
-
-// ── Submit ──
-function collectData() {
-  const services = [];
-  document.querySelectorAll('.service-input').forEach(input => {
-    if (input.value.trim()) services.push(input.value.trim());
-  });
-
-  const competitors = [];
-  document.querySelectorAll('.competitor-input').forEach(input => {
-    if (input.value.trim()) competitors.push(input.value.trim());
-  });
-
-  let locations = state.selectedLocations.length > 0 
-    ? state.selectedLocations 
-    : (state.locationQuick ? [state.locationQuick] : []);
-
-  let lang = state.selectedLang;
-  if (lang === 'אחר') {
-    const other = document.getElementById('otherLang').value.trim();
-    if (other) lang = `אחר: ${other}`;
-  }
-
-  return {
-    "שם העסק / מותג": document.getElementById('businessName').value.trim(),
-    "תחום פעילות": document.getElementById('niche').value.trim(),
-    "שירותים": services,
-    "מוצרים": document.getElementById('products').value.trim(),
-    "אתר אינטרנט": document.getElementById('website').value.trim(),
-    "פייסבוק": document.getElementById('facebook').value.trim(),
-    "אינסטגרם": document.getElementById('instagram').value.trim(),
-    "טיקטוק": document.getElementById('tiktok').value.trim(),
-    "יוטיוב": document.getElementById('youtube').value.trim(),
-    "טווח גילאים": state.selectedAges,
-    "מיקום גיאוגרפי": locations,
-    "שפה עיקרית": lang,
-    "מתחרים": competitors,
-    "מה מבדיל אתכם": document.getElementById('differentiator').value.trim(),
-    "מתחרה שמוצא חן": document.getElementById('inspiredBy').value.trim(),
-    "מטרות": state.selectedGoals,
-    "תקציב חודשי": state.selectedBudget,
-    "הערות אסטרטגיה": document.getElementById('strategyNotes').value.trim(),
-    "שם איש קשר": document.getElementById('contactName').value.trim(),
-    "טלפון": document.getElementById('contactPhone').value.trim(),
-    "אימייל": document.getElementById('contactEmail').value.trim(),
-    "גישה לחשבונות": state.selectedAccess,
-    "הערות גישה": document.getElementById('accessNotes').value.trim(),
-    "_submitted_at": new Date().toISOString()
+// ===== COLLECT DATA =====
+function collectFormData() {
+  const data = {};
+  
+  // Page 1
+  data['שם העסק'] = document.getElementById('businessName').value;
+  data['תחום פעילות'] = document.getElementById('niche').value;
+  data['שירותים'] = Array.from(document.querySelectorAll('#servicesFields input')).map(i => i.value).filter(Boolean);
+  data['מוצרים'] = document.getElementById('products').value;
+  data['USP'] = document.getElementById('usp').value;
+  
+  // Page 2
+  data['אתר אינטרנט'] = document.getElementById('website').value;
+  data['פלטפורמת אתר'] = getChipValues('websitePlatform')[0] || '';
+  data['רשתות חברתיות'] = {
+    Facebook: document.getElementById('socialFacebook').value,
+    Instagram: document.getElementById('socialInstagram').value,
+    TikTok: document.getElementById('socialTikTok').value,
+    YouTube: document.getElementById('socialYouTube').value,
+    LinkedIn: document.getElementById('socialLinkedIn').value,
+    Threads: document.getElementById('socialThreads').value,
   };
+  data['WhatsApp Business'] = getToggleValue('whatsappBusiness');
+  data['WhatsApp מספר'] = document.getElementById('whatsappNumber').value;
+  data['Google Business Profile'] = getToggleValue('googleBusiness');
+  data['חנות דיגיטלית'] = getChipValues('digitalShop');
+  
+  // Page 3
+  data['טווח גילאים'] = getChipValues('ageRange');
+  data['מגדר'] = getChipValues('gender')[0] || '';
+  data['מיקום גיאוגרפי'] = selectedLocations;
+  data['שפה'] = getChipValues('language')[0] || '';
+  if (data['שפה'] === 'אחר') data['שפה'] = document.getElementById('otherLanguage').value || 'אחר';
+  data['לקוח אידיאלי'] = document.getElementById('idealCustomer').value;
+  
+  // Page 4
+  data['מתחרים ישירים'] = Array.from(document.querySelectorAll('#directCompetitors input')).map(i => i.value).filter(Boolean);
+  data['מותגים להשראה'] = Array.from(document.querySelectorAll('#inspiredBrands input')).map(i => i.value).filter(Boolean);
+  data['מה המתחרים עושים טוב'] = document.getElementById('competitorStrengths').value;
+  data['מה חסר בשוק'] = document.getElementById('marketGap').value;
+  data['מודעות מתחרים'] = document.getElementById('competitorAds').value;
+  
+  // Page 5
+  data['מטרות'] = getChipValues('goals');
+  data['סוג פעילות'] = getToggleValue('activityType');
+  data['פלטפורמות בעדיפות'] = getChipValues('priorityPlatforms');
+  data['תקציב חודשי'] = getChipValues('monthlyBudget')[0] || '';
+  data['יעדי זמן'] = getChipValues('timeline')[0] || '';
+  
+  // Page 6
+  data['Brand Guidelines'] = getToggleValue('brandGuidelines');
+  data['נכסי תוכן'] = getChipValues('existingAssets');
+  data['משפיענים'] = getToggleValue('influencers');
+  data['פרטי משפיענים'] = document.getElementById('influencerDetails').value;
+  data['צוות תוכן'] = getToggleValue('contentTeam');
+  data['סגנון מותג'] = getChipValues('brandStyle');
+  
+  // Page 7
+  data['קמפיינים פעילים'] = getToggleValue('activeCampaigns');
+  data['פלטפורמות פרסום'] = getChipValues('adPlatforms');
+  data['ROAS נוכחי'] = document.getElementById('currentROAS').value;
+  data['Meta Pixel'] = getToggleValue('metaPixel');
+  data['CAPI'] = getToggleValue('capi');
+  data['TikTok Pixel'] = getToggleValue('tiktokPixel');
+  data['Google Tracking'] = getToggleValue('googleTracking');
+  data['GA4'] = getToggleValue('ga4');
+  
+  // Page 8
+  data['גישות'] = Array.from(document.querySelectorAll('.custom-checkbox.checked')).map(cb => cb.dataset.value);
+  data['איש קשר'] = {
+    שם: document.getElementById('contactName').value,
+    טלפון: document.getElementById('contactPhone').value,
+    אימייל: document.getElementById('contactEmail').value,
+  };
+  data['הערות'] = document.getElementById('notes').value;
+  
+  data['_timestamp'] = new Date().toISOString();
+  data['_source'] = '11Agency Intake Form v3';
+  
+  return data;
 }
 
-async function submitForm() {
-  const data = collectData();
-  console.log('📋 Client Intake Form Data:', JSON.stringify(data, null, 2));
+function getChipValues(field) {
+  return Array.from(document.querySelectorAll(`[data-field="${field}"] .chip.selected`)).map(c => c.dataset.value);
+}
 
+function getToggleValue(field) {
+  const selected = document.querySelector(`[data-field="${field}"] .toggle-option.selected`);
+  return selected ? selected.dataset.value : '';
+}
+
+// ===== SUBMIT =====
+async function submitForm() {
+  const data = collectFormData();
+  console.log('📋 Form Data:', JSON.stringify(data, null, 2));
+  
   if (WEBHOOK_URL) {
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
-    } catch (err) {
-      console.warn('Webhook send failed:', err);
+    } catch (e) {
+      console.error('Webhook error:', e);
     }
   }
-
+  
   // Hide form, show success
-  document.querySelectorAll('.form-page').forEach(p => {
-    p.classList.remove('active');
-    p.style.display = 'none';
-  });
-  document.querySelector('.brand-header').style.display = 'none';
-  document.querySelector('.progress-container').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('successScreen').classList.add('active');
+  document.getElementById('navBar').style.display = 'none';
+  document.querySelector('.progress-container').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Init
+// ===== INIT =====
 updateProgress();
+updateNav();
+
+// Remove error styling on input
+document.getElementById('businessName').addEventListener('input', function() {
+  this.classList.remove('error');
+  document.getElementById('businessNameError').classList.remove('show');
+});
 </script>
+
 </body>
 </html>
